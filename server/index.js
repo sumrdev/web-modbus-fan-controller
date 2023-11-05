@@ -8,9 +8,10 @@ const APP_PORT = 3000;
 import ModbusRTU from "modbus-serial";
 const client = new ModbusRTU();
 
-// allow from port 5173
+// allow cross-origin requests from any domain and any port
 const corsOptions = {
-  origin: 'http://127.0.0.1:5173',
+    origin: '*',
+    optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
