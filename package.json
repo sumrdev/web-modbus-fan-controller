@@ -7,7 +7,7 @@
     "setup": "cd client && npm install && cd ../server && npm install && cd .. && npm install",
     "start:server": "node server/index.js",
     "start:client": "cd client && npm run dev",
-    "dev": "concurrently \"npm run start:server\" \"npm run start:client\""
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\""
   },
   "keywords": [],
   "author": "",
