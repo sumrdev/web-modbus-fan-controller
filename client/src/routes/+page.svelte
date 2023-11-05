@@ -338,6 +338,10 @@ async function disconnect() {
     transition: animation 0.5s ease; 
   }
 
+  .fan-box > p {
+    max-width: 300px;
+  }
+
   @keyframes spin {
     from {
       transform: rotate(0deg);

@@ -16,6 +16,8 @@ cd web-modbus-fan-controller
 
 npm install && npm run setup && npm run start
 
+#note if you want to just start it without the setup you can use
+npm run start
 ```
 
 ## Configuration
