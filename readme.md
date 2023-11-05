@@ -4,6 +4,9 @@ Simple web interface to control a fan via modbus.
 
 You need a modbus controller with a fan on coil 0 and speed control on coil 1
 
+You also ned to have [nodejs](https://nodejs.org/en) installed and npm 
+
+
 ## Installation
 
 ```bash
