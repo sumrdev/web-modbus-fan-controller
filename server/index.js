@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { exec } from 'child_process';
 
 
 const app = express();
@@ -13,6 +14,8 @@ const corsOptions = {
     origin: '*',
     optionsSuccessStatus: 200,
 };
+
+const pythonScript = 'script.py'
 
 app.use(cors(corsOptions));
 
@@ -115,6 +118,27 @@ app.get('/speed2', async (req, res) => {
     res.json({ message: await readCoils() })
 })
 
-app.get('/status', async (req, res) => {
+app.get('/status',  async (req, res) => {
     res.json({ message: await readCoils() })
+})
+
+app.get('/run-script', async (req, res) => {
+    const script = req.query.script;
+
+    if script is not a number
+    if (isNaN(script)) {
+        res.json({ message: "Script is not a number" })
+        return
+    }
+
+    const command = `python ${script+pythonScript}`;
+    res.json({ message: "Script ran successfully" })
+    exec(command, (err, stdout, stderr) => {
+        if (err) {
+            console.error(err)
+        } else {
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
+        }
+    });
 })

@@ -57,10 +57,14 @@ let ip = "";
 let loading = false
 
 onMount(async () => {
-  await isConnected();
-  if (connected) {
-    await getStatus();
-    connected = true
+  try {
+    await isConnected();
+    if (connected) {
+      await getStatus();
+      connected = true
+    }
+  } catch (error) {
+    
   }
 });
 
@@ -173,6 +177,14 @@ async function disconnect() {
     });
 }
 
+async function callScript(scriptNumber) {
+  fetch(`http://localhost:3000/run-script?script=${scriptNumber}`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+    });
+}
+
 </script>
 <div class="splitter">
   <div class="app">
@@ -185,20 +197,35 @@ async function disconnect() {
       </form>
     </div>
     {#if loading }
-      <p>Loading...</p>
+      <h4>Loading...</h4>
     {/if }
     {#if connected }
-      <p>Connected</p>
+      <h4>Connected</h4>
       <div class="box">
         <button on:click={disconnect}>Disconnect</button>
       </div>
     {/if}
     {#if !connected }
-      <p>Not connected</p>
+      <h4>Not connected</h4>
     {/if}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
-    
+    <div class="runner">
+      <button on:click={() => callScript(1)}>run python1</button>
+      <p>description 1</p>
+    </div>
+    <div class="runner">
+      <button on:click={() => callScript(2)}>run python2</button>
+      <p>description 2</p>
+    </div>
+    <div class="runner">
+      <button on:click={() => callScript(3)}>run python3</button>
+      <p>description 3</p>
+    </div>
+    <div class="runner">
+      <button on:click={() => callScript(4)}>run python4</button>
+      <p>description 4</p>
+    </div>
     {#if fanState == "OFF"}
       <div class="box">
         <button on:click={toggleFan}>Start fan</button>
@@ -224,14 +251,14 @@ async function disconnect() {
   <div class="fan-box">
     <img class={fanState + " fan"} src="fan.svg" width="300px" alt="">
     {#if fanState == "OFF"}
-      <p >Live status: Fan is {fanState}</p>
+      <h4 >Live status: Fan is {fanState}</h4>
     {/if}
   
   {#if fanState == "ON"}
-    <p>Live status: Fan is ON, running slow</p>
+    <h4>Live status: Fan is ON, running slow</h4>
   {/if}
   {#if fanState == "FASTER"}
-  <p>Live status: Fan is ON, running at high speed</p>
+  <h4>Live status: Fan is ON, running at high speed</h4>
   {/if}
   </div>
 </div>
@@ -270,8 +297,12 @@ async function disconnect() {
     align-items: self-start;
     flex-direction: column;
   }
-
   p {
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+  h4 {
     font-size: 30px;
     font-weight: bold;
     color: white;
@@ -300,6 +331,8 @@ async function disconnect() {
     font-weight: bold;
     font-size: 20px;
   }
+
+
 
   /* disabled input */
   input:disabled {
@@ -340,6 +373,14 @@ async function disconnect() {
 
   .fan-box > p {
     max-width: 300px;
+  }
+
+  .runner{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+
   }
 
   @keyframes spin {
