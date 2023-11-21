@@ -24,3 +24,6 @@ npm run start
 Put in the IP of the modbus controller
 
 enjoy
+
+to run python scripts please put them in /server otherwise it wont work
+they need to be called 1script.py 2script.py etc
