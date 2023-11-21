@@ -125,7 +125,7 @@ app.get('/status',  async (req, res) => {
 app.get('/run-script', async (req, res) => {
     const script = req.query.script;
 
-    if script is not a number
+    // if script is not a number
     if (isNaN(script)) {
         res.json({ message: "Script is not a number" })
         return
