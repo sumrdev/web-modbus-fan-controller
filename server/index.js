@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 
 
@@ -43,9 +45,14 @@ function parseCoilData(data) {
 }
 
 async function readCoils() {
-    let res = await client.readCoils(0, 2)
-    return parseCoilData(res)
-}
+    try {
+        await client.readCoils(0, 2)
+        return parseCoilData(res)
+    }
+    catch (e) {
+        return "OFF"
+    }
+}   
 
 async function startFan() {
     await client.writeCoil(0, true)
@@ -123,22 +130,30 @@ app.get('/status',  async (req, res) => {
 })
 
 app.get('/run-script', async (req, res) => {
-    const script = req.query.script;
-
-    // if script is not a number
-    if (isNaN(script)) {
-        res.json({ message: "Script is not a number" })
-        return
-    }
-
-    const command = `python ${script+pythonScript}`;
-    res.json({ message: "Script ran successfully" })
-    exec(command, (err, stdout, stderr) => {
-        if (err) {
-            console.error(err)
-        } else {
-            console.log(`stdout: ${stdout}`);
-            console.log(`stderr: ${stderr}`);
+    try{
+        const script = req.query.script;
+    
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        const pathToScript = path.join(__dirname, 'scripts/');
+        // if script is not a number
+        if (isNaN(script)) {
+            res.json({ message: "Script is not a number" })
+            return
         }
-    });
+    
+        const command = `cd ${pathToScript} && python3 ${script + pythonScript}`;
+        res.json({ message: "Script ran successfully" })
+        exec(command, (err, stdout, stderr) => {
+            if (err) {
+                console.error(err)
+            } else {
+                console.log(`stdout: ${stdout}`);
+                console.log(`stderr: ${stderr}`);
+            }
+        });
+    }
+    catch (e) {
+        res.json({ message: "Script ran unsuccessfully" })
+    }
 })

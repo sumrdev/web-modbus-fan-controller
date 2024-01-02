@@ -25,5 +25,5 @@ Put in the IP of the modbus controller
 
 enjoy
 
-to run python scripts please put them in /server otherwise it wont work
-they need to be called 1script.py 2script.py etc
+## Running scripts.
+You can run python scripts by calling them 1script.py or 2script.py and so on and putting them in /server/scripts
