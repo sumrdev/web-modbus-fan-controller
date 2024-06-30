@@ -21,6 +21,7 @@ const { data: speedData, execute: execSpeed } = useAxios()
 const { data: initConn, execute: execInitConn } = useAxios()
 const { data, execute } = useAxios()
 const ip = ref('')
+const DIVISOR = 100
 const targetSpeed = ref([0])
 const actualSpeed = ref(0)
 const rpm = computed(() => {
@@ -33,7 +34,6 @@ const mac: Ref<string> = ref('')
 const port = ref(502)
 const connection = ref(false)
 const c = useConnectionStore()
-const serverMessage = ref('')
 let ws: WebSocket
 
 const connect = async () => {
@@ -42,6 +42,8 @@ const connect = async () => {
     ip.value = ''
     targetSpeed.value[0] = 0
     clearDeviceInfo()
+    ws.close()
+    actualSpeed.value = 0
     return
   }
   await execConn(`/api/connection`, {
@@ -56,6 +58,7 @@ const connect = async () => {
     ip.value = conn.value.ip
     toast({ title: `Connected to ${ip.value}`, description: 'Enjoy' })
     await getDeviceInfo()
+    connectWebSocket()
     return
   }
   toast({ title: `Failed to connect to ${ip.value}`, description: 'Enjoy' })
@@ -81,66 +84,103 @@ const clearDeviceInfo = () => {
 
 const setSpeed = async () => {
   try {
-    console.log(targetSpeed.value[0])
     await execSpeed(`api/speed`, {
       method: 'POST',
       data: {
         speed: targetSpeed.value[0] * 24
       }
     })
-    actualSpeed.value = speedData.value.speed / 24
-    console.log(actualSpeed.value)
   } catch (error) {
     ;() => {}
   }
 }
 
 const rpmData = computed(() => {
-  return [
+  const MAX = 35
+  const YELLOW = 25
+  const RED = 30
+  let a = [
     {
       name: 'Blank',
-      rpm: 30
-    },
-    {
-      name: 'Speed',
-      rpm: rpm.value
-    },
-    {
-      name: 'Filler',
-      rpm: 30 - rpm.value
+      rpm: MAX
     }
   ]
+  if (rpm.value < YELLOW) {
+    a.push({
+      name: 'Speed',
+      rpm: rpm.value
+    })
+  } else if (rpm.value >= YELLOW && rpm.value < RED) {
+    a.push({
+      name: 'Speed',
+      rpm: YELLOW
+    })
+    a.push({
+      name: 'Yellow',
+      rpm: rpm.value - YELLOW
+    })
+  } else if (rpm.value >= RED) {
+    a.push({
+      name: 'Speed',
+      rpm: YELLOW
+    })
+    a.push({
+      name: 'Yellow',
+      rpm: RED - YELLOW
+    })
+    a.push({
+      name: 'Red',
+      rpm: rpm.value - RED
+    })
+  }
+  a.push({
+    name: 'Filler',
+    rpm: MAX - rpm.value
+  })
+  return a
 })
-
-onMounted(async () => {
-  await execInitConn(`/api/connection`)
-  connection.value = initConn.value.connected
-  if (!connection.value) return
-  ip.value = initConn.value.ip
-
-  getDeviceInfo()
+const colors = computed(() => {
+  if (rpmData.value.length == 3) {
+    return ['transparent', 'green', '#1F2937']
+  } else if (rpmData.value.length == 4) {
+    return ['transparent', 'green', 'yellow', '#1F2937']
+  } else return ['tranparent', 'green', 'yellow', 'red', '#1F2937']
 })
-
-watch(connection, () => {
-  c.connection = connection.value
-})
-
 const connectWebSocket = () => {
-  ws = new WebSocket('ws://localhost:3000')
+  ws = new WebSocket('ws://megatron.local:1337')
 
   ws.onopen = () => {
     console.log('Connected to WebSocket server')
   }
 
   ws.onmessage = (event) => {
-    console.log('Received:', event.data)
-    serverMessage.value = event.data
+    actualSpeed.value = parseInt(event.data) / DIVISOR
   }
 
   ws.onclose = () => {
     console.log('Disconnected from WebSocket server')
   }
 }
+
+const emergencyStop = async () => {
+  await execute(`/api/emergency-stop`, {
+    method: 'POST'
+  })
+  targetSpeed.value[0] = 0
+}
+
+onMounted(async () => {
+  await execInitConn(`/api/connection`)
+  connection.value = initConn.value.connected
+  if (!connection.value) return
+  connectWebSocket()
+  ip.value = initConn.value.ip
+  getDeviceInfo()
+})
+
+watch(connection, () => {
+  c.connection = connection.value
+})
 </script>
 
 <template>
@@ -154,7 +194,10 @@ const connectWebSocket = () => {
           <CardTitle>
             <div class="flex justify-between">
               Speed Controller
-              <Button v-if="connection" style="background: hsl(0, 84.2%, 60.2%)"
+              <Button
+                v-if="connection"
+                style="background: hsl(0, 84.2%, 60.2%)"
+                @click="emergencyStop"
                 ><b>STOP</b></Button
               >
             </div>
@@ -173,10 +216,13 @@ const connectWebSocket = () => {
               :disabled="!connection"
               @update:model-value="setSpeed"
             ></Slider>
+            <div class="w-full flex justify-center mt-[-50px]">
+              <CardTitle>{{ Math.floor((targetSpeed[0] / 128) * 100) }}%</CardTitle>
+            </div>
             <Separator orientation="horizontal" />
             <Label>Pitch Control Monitoring</Label>
             <DonutChart
-              :colors="['transparent', '#6D28D9', '#1F2937']"
+              :colors="colors"
               index="name"
               :category="'rpm'"
               :data="rpmData"

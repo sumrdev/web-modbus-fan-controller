@@ -1,25 +1,5 @@
 import ModbusRTU from "modbus-serial";
-
-const clb = (n: number) => {
-  return (n & 0xff).toString().padStart(2, "0");
-};
-
-const chb = (n: number) => {
-  return ((n >> 8) & 0xff).toString().padStart(2, "0");
-};
-
-function insert(str: string, index: number, value: string) {
-  return str.substring(0, index) + value + str.substring(index);
-}
-
-const bytesToASCII = (numbers: number[]) =>
-  numbers
-    .map((num) => [num >> 8, num & 0xff]) // Extract higher and lower bytes
-    .reduce(
-      (acc, [higherByte, lowerByte]) =>
-        acc + String.fromCharCode(higherByte) + String.fromCharCode(lowerByte),
-      ""
-    );
+import { chb, clb, bytesToASCII, insert } from "./util";
 
 const firmware = async (client: ModbusRTU) => {
   const { data } = await client.readInputRegisters(5029, 4);
@@ -60,6 +40,17 @@ const setSpeed = async (client: ModbusRTU, value: number) => {
   await client.writeRegister(1024, cleanNumber);
   return await getSpeed(client);
 };
+const setStop = async (client: ModbusRTU, value: number) => {
+  const cleanNumber = Math.max(Math.min(value, 4096), 0);
+  await client.writeRegister(1025, cleanNumber);
+  return await getSpeed(client);
+};
+
+const emergencyStop = async (client: ModbusRTU) => {
+  setSpeed(client, 0);
+  setStop(client, 0);
+  return true;
+};
 
 export {
   connect,
@@ -69,4 +60,6 @@ export {
   macAddress,
   getSpeed,
   setSpeed,
+  setStop,
+  emergencyStop,
 };

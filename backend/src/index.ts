@@ -10,6 +10,8 @@ import {
   macAddress,
   modelName,
   setSpeed,
+  emergencyStop,
+  setStop,
 } from "./lib/connection";
 import { validateIP } from "./lib/util";
 import bodyParser from "body-parser";
@@ -19,9 +21,9 @@ import http from "http";
 dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
+const socketPort = 1337;
 
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
 
 const client = new ModbusRTU();
 
@@ -29,19 +31,6 @@ const corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200,
 };
-
-wss.on("connection", (ws) => {
-  console.log("New client connected");
-
-  ws.on("message", (message) => {
-    console.log(`Received: ${message}`);
-    ws.send(`Server: ${message}`);
-  });
-
-  ws.on("close", () => {
-    console.log("Client disconnected");
-  });
-});
 
 let IP = "";
 let moxaPort = "";
@@ -57,6 +46,29 @@ app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
+server.listen(socketPort);
+
+const wss = new WebSocketServer({ server });
+
+wss.on("connection", (ws) => {
+  console.log("New client connected");
+
+  ws.on("message", (message) => {
+    console.log(`Received: ${message}`);
+    ws.send(`Server: ${message}`);
+  });
+
+  ws.on("close", () => {
+    console.log("Client disconnected");
+  });
+
+  setInterval(async () => {
+    console.log("send");
+    if (!client.isOpen) return;
+    ws.send(await getSpeed(client));
+  }, 1000);
+});
+
 app.post("/api/connection", async (req: Request, res: Response) => {
   try {
     const ip = req.query.ip as string;
@@ -69,6 +81,7 @@ app.post("/api/connection", async (req: Request, res: Response) => {
     });
     IP = ip;
     moxaPort = port;
+    setStop(client, 4096);
   } catch (error) {
     console.log(error);
     res.json({ connected: false });
@@ -133,5 +146,13 @@ app.get("/api/mac-address", async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.json({ error: "error" });
+  }
+});
+
+app.post("/api/emergency-stop", async (req: Request, res: Response) => {
+  try {
+    res.json({ success: await emergencyStop(client) });
+  } catch (error) {
+    res.json({ success: false });
   }
 });
