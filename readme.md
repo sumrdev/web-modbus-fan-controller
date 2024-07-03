@@ -1,29 +1,44 @@
-# EZ web modbus fan controller 
+# Modbus Project
 
-Simple web interface to control a fan via modbus.
+This project contains scripts to manage and run CPU fan and windmill controllers using Modbus protocol.
 
-You need a modbus controller with a fan on coil 0 and speed control on coil 1
+## Getting Started
 
-You also ned to have [nodejs](https://nodejs.org/en) installed and npm 
+### Prerequisites
 
+Make sure you have Node.js and npm installed on your machine.
 
-## Installation
+### Installation
 
-```bash
-git clone https://github.com/sumrdev/web-modbus-fan-controller
+1. Clone the repository:
 
-cd web-modbus-fan-controller
+   ```sh
+   git clone https://github.com/sumrdev/web-modbus-fan-controller
+   ```
 
-npm install && npm run setup && npm run start
+2. Navigate to the project directory:
 
-#note if you want to just start it without the setup you can use
-npm run start
+   ```sh
+   cd web-modbus-fan-controller
+   ```
+
+3. Set up dependencies for both CPU fan and windmill controllers:
+   ```sh
+   npm run setup-cpu-fan && npm run setup-windmill
+   ```
+
+### Running the Project
+
+#### CPU Fan Controller
+
+To start the CPU fan controller (both client and server):
+
+```sh
+npm run start-cpu-fan
 ```
 
-## Configuration
-Put in the IP of the modbus controller
+To start the windmill controller run
 
-enjoy
-
-## Running scripts.
-You can run python scripts by calling them 1script.py or 2script.py and so on and putting them in /server/scripts
+```sh
+npm run start-windmill
+```
