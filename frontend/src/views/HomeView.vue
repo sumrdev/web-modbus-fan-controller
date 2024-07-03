@@ -147,7 +147,7 @@ const colors = computed(() => {
   } else return ['tranparent', 'green', 'yellow', 'red', '#1F2937']
 })
 const connectWebSocket = () => {
-  ws = new WebSocket('ws://megatron.local:1337')
+  ws = new WebSocket('ws://localhost:1337')
 
   ws.onopen = () => {
     console.log('Connected to WebSocket server')
@@ -217,7 +217,7 @@ watch(connection, () => {
               @update:model-value="setSpeed"
             ></Slider>
             <div class="w-full flex justify-center mt-[-50px]">
-              <CardTitle>{{ Math.floor((targetSpeed[0] / 128) * 100) }}%</CardTitle>
+              <CardTitle>{{ Math.floor((targetSpeed[0] / 128) * 100) }} %</CardTitle>
             </div>
             <Separator orientation="horizontal" />
             <Label>Pitch Control Monitoring</Label>
