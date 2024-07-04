@@ -20,6 +20,8 @@ const { data: conn, execute: execConn } = useAxios()
 const { data: speedData, execute: execSpeed } = useAxios()
 const { data: initConn, execute: execInitConn } = useAxios()
 const { data, execute } = useAxios()
+const { data: emercgency, execute: execEmerg } = useAxios()
+emercgency.value = 'started'
 const ip = ref('')
 const DIVISOR = 100
 const targetSpeed = ref([0])
@@ -163,10 +165,17 @@ const connectWebSocket = () => {
 }
 
 const emergencyStop = async () => {
-  await execute(`/api/emergency-stop`, {
+  if (emercgency.value.success == 'started') {
+    await execEmerg(`/api/emergency-stop`, {
+      method: 'POST'
+    })
+    targetSpeed.value[0] = 0
+    return
+  }
+
+  await execEmerg(`/api/restart`, {
     method: 'POST'
   })
-  targetSpeed.value[0] = 0
 }
 
 onMounted(async () => {
@@ -196,9 +205,9 @@ watch(connection, () => {
               Speed Controller
               <Button
                 v-if="connection"
-                style="background: hsl(0, 84.2%, 60.2%)"
+                :style="`background: ${emercgency.success == 'stopped' ? 'green' : 'hsl(0, 84.2%, 60.2%)'}`"
                 @click="emergencyStop"
-                ><b>STOP</b></Button
+                ><b>{{ emercgency.success == 'stopped' ? 'RESTART' : 'STOP' }}</b></Button
               >
             </div>
           </CardTitle>

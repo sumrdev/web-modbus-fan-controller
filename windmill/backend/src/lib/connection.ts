@@ -49,7 +49,12 @@ const setStop = async (client: ModbusRTU, value: number) => {
 const emergencyStop = async (client: ModbusRTU) => {
   setSpeed(client, 0);
   setStop(client, 0);
-  return true;
+  return "stopped";
+};
+const restart = async (client: ModbusRTU) => {
+  setSpeed(client, 0);
+  setStop(client, 4096);
+  return "started";
 };
 
 export {
@@ -62,4 +67,5 @@ export {
   setSpeed,
   setStop,
   emergencyStop,
+  restart,
 };

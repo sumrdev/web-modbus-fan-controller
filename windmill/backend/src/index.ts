@@ -12,6 +12,7 @@ import {
   setSpeed,
   emergencyStop,
   setStop,
+  restart,
 } from "./lib/connection";
 import { validateIP } from "./lib/util";
 import bodyParser from "body-parser";
@@ -152,6 +153,13 @@ app.get("/api/mac-address", async (req: Request, res: Response) => {
 app.post("/api/emergency-stop", async (req: Request, res: Response) => {
   try {
     res.json({ success: await emergencyStop(client) });
+  } catch (error) {
+    res.json({ success: false });
+  }
+});
+app.post("/api/restart", async (req: Request, res: Response) => {
+  try {
+    res.json({ success: await restart(client) });
   } catch (error) {
     res.json({ success: false });
   }
