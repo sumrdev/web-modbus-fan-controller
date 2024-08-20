@@ -191,13 +191,28 @@ onMounted(async () => {
 watch(connection, () => {
   c.connection = connection.value
 })
+
+const imageSrc = ref('/txone.png') // Initial image source
+const fileInput = ref(null)
+
+const triggerFilePicker = () => {
+  fileInput.value.click()
+}
+
+const onFileChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    imageSrc.value = URL.createObjectURL(file)
+  }
+}
 </script>
 
 <template>
   <div class="flex flex-row w-full overflow-hidden">
     <div class="flex flex-col w-1/3">
       <div class="w-full mt-6 ml-6">
-        <img src="/txone.png" class="w-[300px]" alt="" />
+        <img :src="imageSrc" class="w-[300px]" alt="" @click="triggerFilePicker" />
+        <input id="picture" ref="fileInput" type="file" class="hidden" @change="onFileChange" />
       </div>
       <Card class="w-full mt-6 ml-6">
         <CardHeader>
