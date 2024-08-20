@@ -15,6 +15,7 @@ import Toaster from '@/components/ui/toast/Toaster.vue'
 
 import { DonutChart } from '@/components/ui/chart-donut'
 import WindmillSpinner from '@/components/spinner/WindmillSpinner.vue'
+
 const { toast } = useToast()
 const { data: conn, execute: execConn } = useAxios()
 const { data: speedData, execute: execSpeed } = useAxios()
