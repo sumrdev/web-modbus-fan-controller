@@ -6,12 +6,12 @@
   "scripts": {
     "start:client": "cd cpufan/client && npm run dev",
     "start:server": "node cpufan/server/index.js",
-    "start:frontend": "cd windmill/frontend && npm run dev",
+    "start:frontend": "cd windmill/frontend && npm run dev -- --host",
     "start:backend": "cd windmill/backend && npx ts-node src/index.ts",
     "start-cpu-fan": "concurrently \"npm run start:server\" \"npm run start:client\"",
     "setup-cpu-fan": "npm i && cd cpufan/client && npm i && cd ../server && npm i ",
     "setup-windmill": "npm i && cd windmill/frontend && npm i && cd ../backend && npm i ",
-    "start-windmill": "concurrently \"npm run start:backend\" \"npm run start:frontend -- --host\""
+    "start-windmill": "concurrently \"npm run start:backend\" \"npm run start:frontend \""
   },
   "keywords": [],
   "author": "",
