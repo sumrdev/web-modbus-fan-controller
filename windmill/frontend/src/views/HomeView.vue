@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -15,6 +16,7 @@ import Toaster from '@/components/ui/toast/Toaster.vue'
 
 import { DonutChart } from '@/components/ui/chart-donut'
 import WindmillSpinner from '@/components/spinner/WindmillSpinner.vue'
+import ThemeSwitcher from '@/components/switcher/ThemeSwitcher.vue'
 
 const { toast } = useToast()
 const { data: conn, execute: execConn } = useAxios()
@@ -59,12 +61,12 @@ const connect = async () => {
   connection.value = conn.value.connected
   if (connection.value) {
     ip.value = conn.value.ip
-    toast({ title: `Connected to ${ip.value}`, description: 'Enjoy' })
+    toast({ title: `Connected to ${ip.value}`, description: 'You spin me right right round' })
     await getDeviceInfo()
     connectWebSocket()
     return
   }
-  toast({ title: `Failed to connect to ${ip.value}`, description: 'Enjoy' })
+  toast({ title: `Failed to connect to ${ip.value}`, description: 'Maybe try another IP?' })
 }
 
 const getDeviceInfo = async () => {
@@ -192,13 +194,15 @@ watch(connection, () => {
   c.connection = connection.value
 })
 
-const imageSrc = ref('/txone.png') // Initial image source
+const imageSrc = ref('/logo.png') // Initial image source
 const fileInput = ref(null)
 
 const triggerFilePicker = () => {
+  //@ts-ignore bruh ruh
   fileInput.value.click()
 }
 
+//@ts-ignore bruh ruh
 const onFileChange = (event) => {
   const file = event.target.files[0]
   if (file) {
@@ -297,6 +301,18 @@ const onFileChange = (event) => {
             <div class="flex items-center space-x-2">
               <Switch id="connection" :checked="connection" @update:checked="connect" />
               <Label for="connection-label">{{ connection ? 'Connected' : 'Disconnected' }}</Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <Card class="w-full mt-6 ml-6">
+        <CardHeader>
+          <CardTitle>Themes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="flex flex-col gap-4">
+            <div class="flex w-full items-center gap-1.5">
+              <ThemeSwitcher></ThemeSwitcher>
             </div>
           </div>
         </CardContent>
