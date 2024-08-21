@@ -37,8 +37,17 @@ To start the CPU fan controller (both client and server):
 npm run start-cpu-fan
 ```
 
+#### Windmill
+
 To start the windmill controller run
 
 ```sh
 npm run start-windmill
 ```
+
+- In order to change the picture in the windmill controller, you can click the default TX-One image and replace it with a picture of your own
+- For it to survive reloads you must however replace the logo with your own file in `/windmill/frontend/public/logo.png`
+- To change colorscheme, you need to change a bit in the `/windmill/frontend/src/assets/main.css`
+- Goto [shadcn themes][https://www.shadcn-vue.com/themes.html] and press the customize button and choose your style.
+- Then click copy code and replace the existing code it where the comments say in `/windmill/frontend/src/assets/main.css`
+- Remember you can change between light and dark mode in the bottom of the page!
