@@ -1,6 +1,12 @@
 import ModbusRTU from "modbus-serial";
 import { chb, clb, bytesToASCII, insert } from "./util";
 
+const OFF = 600
+const GREEN = 2600
+const YELLOW = 3100
+const RED = 4095
+const BEEP = 4096
+
 const firmware = async (client: ModbusRTU) => {
   const { data } = await client.readInputRegisters(5029, 4);
   return `v${data[0] & 0xff}.${(data[0] >> 8) & 0xff}\
@@ -38,6 +44,11 @@ const getSpeed = async (client: ModbusRTU) => {
 const setSpeed = async (client: ModbusRTU, value: number) => {
   const cleanNumber = Math.max(Math.min(value, 4096), 0);
   await client.writeRegister(1024, cleanNumber);
+  if(cleanNumber < OFF) client.writeRegister(1026,0);
+  else if(cleanNumber >= OFF && cleanNumber < GREEN) client.writeRegister(1026,820);
+  else if (cleanNumber >= GREEN && cleanNumber < YELLOW) client.writeRegister(1026,3277);
+  else if (cleanNumber >= YELLOW && cleanNumber < RED) client.writeRegister(1026,3769);
+  else if (cleanNumber >= BEEP) client.writeRegister(1026,4096)
   return await getSpeed(client);
 };
 const setStop = async (client: ModbusRTU, value: number) => {

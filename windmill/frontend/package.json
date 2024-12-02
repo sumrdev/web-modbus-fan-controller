@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.2",
     "@radix-icons/vue": "^1.0.0",
     "@unovis/ts": "^1.4.1",
     "@unovis/vue": "^1.4.1",

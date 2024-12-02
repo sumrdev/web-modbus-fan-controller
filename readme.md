@@ -51,3 +51,4 @@ npm run start-windmill
 - Goto [shadcn themes][https://www.shadcn-vue.com/themes.html] and press the customize button and choose your style.
 - Then click copy code and replace the existing code it where the comments say in `/windmill/frontend/src/assets/main.css`
 - Remember you can change between light and dark mode in the bottom of the page!
+- To configure the values for the Traffic Light in Windmill, please see the windmill/backend/lib/connection.ts file and change the header constants.
