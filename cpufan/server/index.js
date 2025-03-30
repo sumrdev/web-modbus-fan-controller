@@ -112,12 +112,12 @@ app.get("/stop", async (req, res) => {
 });
 
 app.get("/speed1", async (req, res) => {
-  await setToSpeed1();
+  await setToSpeed2();
   res.json({ message: await readCoils() });
 });
 
 app.get("/speed2", async (req, res) => {
-  await setToSpeed2();
+  await setToSpeed1();
   res.json({ message: await readCoils() });
 });
 
