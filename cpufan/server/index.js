@@ -21,7 +21,7 @@ const pythonScript = "script.py";
 app.use(cors(corsOptions));
 
 app.listen(APP_PORT, () =>
-  console.log(`Modbus API Backend running on port ${APP_PORT}!`)
+  console.log(`Modbus API Backend running on port ${APP_PORT}!`),
 );
 
 async function connect(ip, port = 502) {
@@ -63,12 +63,12 @@ async function stopFan() {
 
 async function setToSpeed1() {
   await client.writeCoil(0, true);
-  await client.writeCoil(1, false);
+  await client.writeCoil(1, true);
 }
 
 async function setToSpeed2() {
   await client.writeCoil(0, true);
-  await client.writeCoil(1, true);
+  await client.writeCoil(1, false);
 }
 
 function isOpen() {
