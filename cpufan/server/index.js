@@ -32,7 +32,7 @@ function parseCoilData(data) {
   let result = "";
   if (data.data[0] == 0) {
     result = "OFF";
-  } else if (data.data[0] == 1 && data.data[1] == 0) {
+  } else if (data.data[0] == 1) {
     result = "ON";
   }
   if (data.data[1] == 1 && result == "ON") {
