@@ -32,12 +32,12 @@ function parseCoilData(data) {
   let result = "";
   if (data.data[0] == 0) {
     result = "OFF";
-  } else if (data.data[0] == 1) {
+  } else if (data.data[0] == 1 && data.data[1] == 1) {
     result = "ON";
   }
-  if (data.data[1] == 1 && result == "ON") {
+  if (data.data[1] == 0 && result == "ON") {
     result = "FASTER";
-  } else if (data.data[1] == 1 && result == "OFF") {
+  } else if (data.data[1] == 0 && result == "OFF") {
     result = "DESYNCED";
   }
   return result;
@@ -63,12 +63,12 @@ async function stopFan() {
 
 async function setToSpeed1() {
   await client.writeCoil(0, true);
-  await client.writeCoil(1, false);
+  await client.writeCoil(1, true);
 }
 
 async function setToSpeed2() {
   await client.writeCoil(0, true);
-  await client.writeCoil(1, true);
+  await client.writeCoil(1, false);
 }
 
 function isOpen() {
