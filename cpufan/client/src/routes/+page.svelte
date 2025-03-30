@@ -208,24 +208,6 @@ async function callScript(scriptNumber) {
     {#if !connected }
       <h4>Not connected</h4>
     {/if}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="runner">
-      <button on:click={() => callScript(1)}>run python1</button>
-      <p>description 1</p>
-    </div>
-    <div class="runner">
-      <button on:click={() => callScript(2)}>run python2</button>
-      <p>description 2</p>
-    </div>
-    <div class="runner">
-      <button on:click={() => callScript(3)}>run python3</button>
-      <p>description 3</p>
-    </div>
-    <div class="runner">
-      <button on:click={() => callScript(4)}>run python4</button>
-      <p>description 4</p>
-    </div>
     {#if fanState == "OFF"}
       <div class="box">
         <button on:click={toggleFan}>Start fan</button>
