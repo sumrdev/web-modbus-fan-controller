@@ -63,12 +63,12 @@ async function stopFan() {
 
 async function setToSpeed1() {
   await client.writeCoil(0, true);
-  await client.writeCoil(1, true);
+  await client.writeCoil(1, false);
 }
 
 async function setToSpeed2() {
   await client.writeCoil(0, true);
-  await client.writeCoil(1, false);
+  await client.writeCoil(1, true);
 }
 
 function isOpen() {
