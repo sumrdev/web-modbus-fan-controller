@@ -35,9 +35,9 @@ function parseCoilData(data) {
   } else if (data.data[0] == 1) {
     result = "ON";
   }
-  if (data.data[1] == 1 && result == "ON") {
+  if (data.data[1] == 0 && result == "ON") {
     result = "FASTER";
-  } else if (data.data[1] == 1 && result == "OFF") {
+  } else if (data.data[1] == 0 && result == "OFF") {
     result = "DESYNCED";
   }
   return result;
