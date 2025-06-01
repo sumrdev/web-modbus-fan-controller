@@ -101,10 +101,10 @@ app.use(async (req, res, next) => {
     try {
       await connect(IP);
       console.log("connected: awesome")
-      res.json({ message: client.isOpen });
+      return res.json({ message: client.isOpen });
     } catch (e) {
       console.log("not: awesome")
-      res.json({ message: false });
+      return res.json({ message: false });
     }
 
   }
