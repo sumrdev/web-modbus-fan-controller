@@ -9,7 +9,6 @@ const APP_PORT = 3000;
 
 import ModbusRTU from "modbus-serial";
 let client = new ModbusRTU();
-client.setTimeout(500);
 // allow cross-origin requests from any domain and any port
 const corsOptions = {
   origin: "*",
@@ -97,7 +96,6 @@ app.use(async (req, res, next) => {
   if (!open) {
     console.log("reconnecting")
     client = new ModbusRTU();
-    client.setTimeout(500);
     try {
       await connect(IP);
       console.log("connected: awesome")
