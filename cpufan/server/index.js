@@ -27,8 +27,13 @@ app.listen(APP_PORT, () =>
 let IP;
 
 async function connect(ip, port = 502) {
-  IP = ip;
-  await client.connectTCP(ip, { port: port, timeout: 1000 });
+  try {
+
+    IP = ip;
+    await client.connectTCP(ip, { port: port, timeout: 1000 });
+  } catch (error) {
+
+  }
 }
 
 function parseCoilData(data) {
