@@ -87,6 +87,7 @@ function isOpen() {
 }
 
 app.use(async (req, res, next) => {
+  console.log("got request")
   const skipRoutes = ["/is-connected", "/connect"];
   if (skipRoutes.includes(req.path)) {
     return next();
