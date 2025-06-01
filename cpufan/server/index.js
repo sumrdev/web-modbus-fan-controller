@@ -100,20 +100,16 @@ app.use(async (req, res, next) => {
   } catch (error) {
 
     console.log("reconnecting")
+    client.destroy()
     client = new ModbusRTU();
     try {
       await connect(IP);
       console.log("connected: awesome")
-      return res.json({ message: client.isOpen });
     } catch (e) {
       console.log("not: awesome")
-      return res.json({ message: false });
     }
-
-
   }
   next();
-
 })
 
 app.get("/is-connected", async (req, res) => {
@@ -147,7 +143,6 @@ app.get("/disconnect", async (req, res) => {
     res.json({ message: false });
   } catch (error) {
     console.log(error)
-    res.json({ error })
   }
 });
 
@@ -157,7 +152,6 @@ app.get("/start", async (req, res) => {
     res.json({ message: await readCoils() });
   } catch (error) {
     console.log(erro)
-    res.json({ error })
   }
 });
 
@@ -167,7 +161,6 @@ app.get("/stop", async (req, res) => {
     res.json({ message: await readCoils() });
   } catch (error) {
     console.log(error)
-    res.json({ error })
   }
 });
 
@@ -177,7 +170,6 @@ app.get("/speed1", async (req, res) => {
     res.json({ message: await readCoils() });
   } catch (error) {
     console.log(error)
-    res.json({ error })
   }
 });
 
@@ -187,7 +179,6 @@ app.get("/speed2", async (req, res) => {
     res.json({ message: await readCoils() });
   } catch (error) {
     console.log(error)
-    res.json({ error })
   }
 });
 
@@ -197,7 +188,6 @@ app.get("/status", async (req, res) => {
   } catch (error) {
     handleError(error)
     console.log(error)
-    res.json({ error })
   }
 });
 
