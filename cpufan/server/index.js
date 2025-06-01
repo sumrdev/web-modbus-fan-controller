@@ -50,12 +50,8 @@ function parseCoilData(data) {
 }
 
 async function readCoils() {
-  try {
-    let res = await client.readCoils(0, 2);
-    return parseCoilData(res);
-  } catch (e) {
-    return "OFF";
-  }
+  let res = await client.readCoils(0, 2);
+  return parseCoilData(res);
 }
 
 async function startFan() {
