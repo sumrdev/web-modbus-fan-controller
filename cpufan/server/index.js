@@ -8,7 +8,7 @@ const app = express();
 const APP_PORT = 3000;
 
 import ModbusRTU from "modbus-serial";
-const client = new ModbusRTU();
+let client = new ModbusRTU();
 
 // allow cross-origin requests from any domain and any port
 const corsOptions = {
@@ -19,12 +19,16 @@ const corsOptions = {
 const pythonScript = "script.py";
 
 app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.listen(APP_PORT, () =>
   console.log(`Modbus API Backend running on port ${APP_PORT}!`),
 );
 
+let IP;
+
 async function connect(ip, port = 502) {
+  IP = ip;
   await client.connectTCP(ip, { port: port });
 }
 
@@ -79,6 +83,25 @@ function isOpen() {
   }
 }
 
+function handleError(error) {
+  client = new ModbusRTU();
+}
+
+app.use(async (req, res, next) => {
+  const skipRoutes = ["/is-connected", "/connect"];
+  if (skipRoutes.includes(req.path)) {
+    return next();
+  }
+
+  let open = isOpen();
+  if (!open) {
+    client = new ModbusRTU();
+    await connect(IP);
+  }
+  next();
+
+})
+
 app.get("/is-connected", async (req, res) => {
   try {
 
@@ -114,7 +137,6 @@ app.get("/disconnect", async (req, res) => {
 
 app.get("/start", async (req, res) => {
   try {
-
     await startFan();
     res.json({ message: await readCoils() });
   } catch (error) {
@@ -158,6 +180,7 @@ app.get("/status", async (req, res) => {
   try {
     res.json({ message: await readCoils() });
   } catch (error) {
+    handleError(error)
     console.log(error)
     res.json({ error })
   }
