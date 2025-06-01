@@ -28,7 +28,6 @@ let IP;
 
 async function connect(ip, port = 502) {
   try {
-
     IP = ip;
     await client.connectTCP(ip, { port: port, timeout: 1000 });
   } catch (error) {
@@ -92,10 +91,10 @@ app.use(async (req, res, next) => {
   if (skipRoutes.includes(req.path)) {
     return next();
   }
-  console.log("reconnecting")
 
   let open = isOpen();
   if (!open) {
+    console.log("reconnecting")
     client = new ModbusRTU();
     await connect(IP);
   }
