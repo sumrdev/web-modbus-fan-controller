@@ -87,15 +87,12 @@ function isOpen() {
   }
 }
 
-function handleError(error) {
-  client = new ModbusRTU();
-}
-
 app.use(async (req, res, next) => {
   const skipRoutes = ["/is-connected", "/connect"];
   if (skipRoutes.includes(req.path)) {
     return next();
   }
+  console.log("reconnecting")
 
   let open = isOpen();
   if (!open) {
@@ -122,8 +119,10 @@ app.get("/connect", async (req, res) => {
   const ip = req.query.ip;
   try {
     await connect(ip);
+    console.log("connected: awesome")
     res.json({ message: client.isOpen });
   } catch (e) {
+    console.log("not: awesome")
     res.json({ message: false });
   }
 });
@@ -160,7 +159,6 @@ app.get("/stop", async (req, res) => {
 });
 
 app.get("/speed1", async (req, res) => {
-
   try {
     await setToSpeed2();
     res.json({ message: await readCoils() });
