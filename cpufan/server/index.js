@@ -92,8 +92,13 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  let open = isOpen();
-  if (!open) {
+  try {
+
+    client.setTimeout(500)
+    await readCoils();
+
+  } catch (error) {
+
     console.log("reconnecting")
     client = new ModbusRTU();
     try {
@@ -104,6 +109,7 @@ app.use(async (req, res, next) => {
       console.log("not: awesome")
       return res.json({ message: false });
     }
+
 
   }
   next();
