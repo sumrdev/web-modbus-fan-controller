@@ -80,8 +80,14 @@ function isOpen() {
 }
 
 app.get("/is-connected", async (req, res) => {
-  let value = isOpen();
-  res.json({ message: value });
+  try {
+
+    let value = isOpen();
+    res.json({ message: value });
+  } catch (error) {
+    console.log(error)
+    res.json({ error })
+  }
 });
 
 app.get("/connect", async (req, res) => {
@@ -96,33 +102,65 @@ app.get("/connect", async (req, res) => {
 });
 
 app.get("/disconnect", async (req, res) => {
-  client.close();
-  let open = isOpen();
-  res.json({ message: false });
+  try {
+    client.close();
+    let open = isOpen();
+    res.json({ message: false });
+  } catch (error) {
+    console.log(error)
+    res.json({ error })
+  }
 });
 
 app.get("/start", async (req, res) => {
-  await startFan();
-  res.json({ message: await readCoils() });
+  try {
+
+    await startFan();
+    res.json({ message: await readCoils() });
+  } catch (error) {
+    console.log(erro)
+    res.json({ error })
+  }
 });
 
 app.get("/stop", async (req, res) => {
-  await stopFan();
-  res.json({ message: await readCoils() });
+  try {
+    await stopFan();
+    res.json({ message: await readCoils() });
+  } catch (error) {
+    console.log(error)
+    res.json({ error })
+  }
 });
 
 app.get("/speed1", async (req, res) => {
-  await setToSpeed2();
-  res.json({ message: await readCoils() });
+
+  try {
+    await setToSpeed2();
+    res.json({ message: await readCoils() });
+  } catch (error) {
+    console.log(error)
+    res.json({ error })
+  }
 });
 
 app.get("/speed2", async (req, res) => {
-  await setToSpeed1();
-  res.json({ message: await readCoils() });
+  try {
+    await setToSpeed1();
+    res.json({ message: await readCoils() });
+  } catch (error) {
+    console.log(error)
+    res.json({ error })
+  }
 });
 
 app.get("/status", async (req, res) => {
-  res.json({ message: await readCoils() });
+  try {
+    res.json({ message: await readCoils() });
+  } catch (error) {
+    console.log(error)
+    res.json({ error })
+  }
 });
 
 app.get("/run-script", async (req, res) => {
