@@ -86,7 +86,6 @@ function isOpen() {
 }
 
 app.use(async (req, res, next) => {
-  console.log("got request")
   const skipRoutes = ["/is-connected", "/connect"];
   if (skipRoutes.includes(req.path)) {
     return next();
@@ -94,12 +93,12 @@ app.use(async (req, res, next) => {
 
   try {
 
+    console.log("reading status before allowing endpoint")
     client.setTimeout(500)
     await readCoils();
 
   } catch (error) {
-
-    console.log("reconnecting")
+    console.log("reconnecting", error)
     client.destroy()
     client = new ModbusRTU();
     try {
