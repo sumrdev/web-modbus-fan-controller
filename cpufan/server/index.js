@@ -28,7 +28,7 @@ let IP;
 
 async function connect(ip, port = 502) {
   IP = ip;
-  await client.connectTCP(ip, { port: port, timeout: 1 });
+  await client.connectTCP(ip, { port: port, timeout: 1000 });
 }
 
 function parseCoilData(data) {
