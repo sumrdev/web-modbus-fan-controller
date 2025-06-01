@@ -98,7 +98,15 @@ app.use(async (req, res, next) => {
     console.log("reconnecting")
     client = new ModbusRTU();
     client.setTimeout(500);
-    await connect(IP);
+    try {
+      await connect(IP);
+      console.log("connected: awesome")
+      res.json({ message: client.isOpen });
+    } catch (e) {
+      console.log("not: awesome")
+      res.json({ message: false });
+    }
+
   }
   next();
 
