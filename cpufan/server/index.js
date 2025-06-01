@@ -19,7 +19,6 @@ const corsOptions = {
 const pythonScript = "script.py";
 
 app.use(cors(corsOptions));
-app.use(cors(corsOptions));
 
 app.listen(APP_PORT, () =>
   console.log(`Modbus API Backend running on port ${APP_PORT}!`),
@@ -29,7 +28,7 @@ let IP;
 
 async function connect(ip, port = 502) {
   IP = ip;
-  await client.connectTCP(ip, { port: port });
+  await client.connectTCP(ip, { port: port, timeout: 1 });
 }
 
 function parseCoilData(data) {
