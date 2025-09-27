@@ -57,11 +57,15 @@ app.use(async (req: Request, _: Response, next) => {
     console.log("reconnecting", error);
     client.destroy(() => {});
     client = new ModbusRTU();
-    try {
-      await connect(client, IP, p);
-      console.log("connected: awesome");
-    } catch (e) {
-      console.log("not: awesome");
+    while (true) {
+      try {
+        await connect(client, IP, p);
+        console.log("connected: awesome");
+        next();
+        return;
+      } catch (e) {
+        console.log("not: awesome");
+      }
     }
   }
   next();
