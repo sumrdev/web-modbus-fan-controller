@@ -43,30 +43,29 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-
 app.use(async (req: Request, _: Response, next) => {
   const skipRoutes = ["api/connection"];
   if (skipRoutes.includes(req.path)) {
     return next();
   }
-  const p = parseInt(port as string)
+  const p = parseInt(port as string);
   try {
-    console.log("reading status before allowing endpoint")
-    client.setTimeout(500)
+    console.log("reading status before allowing endpoint");
+    client.setTimeout(500);
     await getSpeed(client);
   } catch (error) {
-    console.log("reconnecting", error)
-    client.destroy(() => { })
+    console.log("reconnecting", error);
+    client.destroy(() => {});
     client = new ModbusRTU();
     try {
       await connect(client, IP, p);
-      console.log("connected: awesome")
+      console.log("connected: awesome");
     } catch (e) {
-      console.log("not: awesome")
+      console.log("not: awesome");
     }
   }
   next();
-})
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
@@ -89,9 +88,28 @@ wss.on("connection", (ws) => {
   });
 
   setInterval(async () => {
-    console.log("send");
-    if (!client.isOpen) return;
-    ws.send(await getSpeed(client));
+    try {
+      console.log("send");
+      if (!client.isOpen) return;
+      ws.send(await getSpeed(client));
+    } catch (error) {
+      try {
+        console.log("reading status before allowing endpoint");
+        client.setTimeout(500);
+        await getSpeed(client);
+      } catch (error) {
+        const p = parseInt(port as string);
+        console.log("reconnecting", error);
+        client.destroy(() => {});
+        client = new ModbusRTU();
+        try {
+          await connect(client, IP, p);
+          console.log("connected: awesome");
+        } catch (e) {
+          console.log("not: awesome");
+        }
+      }
+    }
   }, 1000);
 });
 
@@ -121,8 +139,8 @@ app.get("/api/connection", async (_req: Request, res: Response) => {
       : { connected: client.isOpen };
     res.json(ret);
   } catch (error) {
-    console.log(error)
-    res.json({ error: error })
+    console.log(error);
+    res.json({ error: error });
   }
 });
 
